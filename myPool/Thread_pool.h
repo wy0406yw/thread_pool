@@ -21,7 +21,7 @@ private:
 	std::vector<std::thread> pool; //池
     std::queue<std::function<void()>> tasks_queue;//任务队列
     uint32_t active_pool_num = ACTV_THS_NUM;
-    const uint32_t capacity = NORMAL_THS_NUM;
+    uint32_t capacity = NORMAL_THS_NUM;
     std::atomic<bool> stop;
 
 protected:
@@ -34,19 +34,7 @@ protected:
     {
         active_pool_num--;
     }
-
-public:
-	Thread_pool(uint32_t _capacity);
-    ~Thread_pool();
-    void _stop() 
-    {
-        stop.store(true);
-    }
-    void start()
-    {
-        stop.store(false);
-    }
-     
+	
     //将任务封装成统一的签名 void(void);
     template<
         typename Fun,
@@ -65,6 +53,19 @@ public:
         return std::packaged_task<Rtrn(void)>(task_fun);
     }
 
+public:
+	Thread_pool(uint32_t _capacity);
+    ~Thread_pool();
+    void _stop() 
+    {
+        stop.store(true);
+    }
+    void start()
+    {
+        stop.store(false);
+    }
+     
+    
     template<
         typename Fun,
         typename ...Args,
